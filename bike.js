@@ -1,14 +1,10 @@
 const express = require('express');
 const mongodb = require('mongodb');
 require('dotenv').config();
-
 var cors = require("cors");
-//const nodemailer = require("nodemailer");
-
-
+const nodemailer = require("nodemailer");
 const app = express();
 const mongoClient = mongodb.MongoClient;
-// const objectId = mongodb.ObjectId;
 const dbUrl = process.env.DB_URL || "mongodb://127.0.0.1:27017";
 const port = process.env.PORT || 4000;
 
@@ -23,7 +19,7 @@ app.post('/book', async (req, res) => {
         let clientInfo = await mongoClient.connect(dbUrl);
         let db = clientInfo.db("bike");
         await db.collection("service").insertOne(req.body)
-      //  await MailUser(req.body.email,req.body.firstName,req.body.servicedate)
+        await MailUser(req.body.email,req.body.firstName,req.body.dateTime,req.body.model)
         res.status(200).json({message:"success"})
         clientInfo.close();
     } 
@@ -48,26 +44,27 @@ app.get('/bookings', async (req, res) => {
 
 
 
-/*async function MailUser(email,name,date) {
+async function MailUser(email,name,date,model) {
     console.log(name)
     console.log(email)
     console.log(date)
+    console.log(model)
     let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 465,
         secure: true, 
         auth: {      
-            user:"suryanagarajan01@gmail.com",
+            user:"mmyugesh@gmail.com",
             pass:process.env.pwd
         }
     });
 
-    // send mail with defined transport object
+    // sending mail 
     let info = await transporter.sendMail({
-        from:"suryanagarajan01@gmail.com", 
+        from:"mmyugesh@gmail.com", 
         to: email, 
-        subject: "Hai..."+"from book my mech", 
-        html: `<p>our technician will reach you on ${date}, <span>thanks</span> </p>`, // html body
+        subject: "Confirmation for booking bike service from MechMach", 
+        html: `<p>Our staff will reach you on ${date} for your ${model} service<br><br><span><b>Thankyou for booking MechMach!!</b></span> </p>`, // html body
     });
 
     // verify connection configuration
@@ -75,10 +72,10 @@ app.get('/bookings', async (req, res) => {
         if (error) {
             console.log(error);
         } else {
-            console.log("Mailed!!");
+            console.log("Mailed Successfully");
         }
     });
 
 }
-*/
+
 app.listen(port, () => console.log("started at port ", port));
