@@ -1,17 +1,24 @@
 const express = require('express');
 const mongodb = require('mongodb');
 require('dotenv').config();
-var cors = require("cors");
 const nodemailer = require("nodemailer");
 const app = express();
 const mongoClient = mongodb.MongoClient;
 const dbUrl = process.env.DB_URL || "mongodb://127.0.0.1:27017";
 const port = process.env.PORT || 4000;
+var cors = require("cors");
 
-app.use(express.json());
 app.use(cors());
 
-
+app.use(express.json());
+app.use(function(req, res, next) {  
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Headers","*");
+res.header('Access-Control-Allow-Credentials', true);
+res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    next();
+}); 
 
 
 app.post('/book', async (req, res) => {
