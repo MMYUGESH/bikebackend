@@ -20,6 +20,7 @@ res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
 }); 
 
 
+
 app.post('/book', async (req, res) => {
     try {
         let clientInfo = await mongoClient.connect(dbUrl);
@@ -59,11 +60,17 @@ async function MailUser(email,name,date,model) {
         host: "smtp.gmail.com",
         port: 465,
         secure: true, 
+        type: 'POST',
+        headers: {'Accept': 'application/json;'},
         auth: {      
             user:"mmyugesh@gmail.com",
             pass:process.env.pwd
         }
+       
+           
+           
     });
+   
 
     // sending mail 
     let info = await transporter.sendMail({
