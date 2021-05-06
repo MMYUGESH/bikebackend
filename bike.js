@@ -30,7 +30,7 @@ app.post('/book',cors(),async (req, res) => {
         let clientInfo = await mongoClient.connect(dbUrl);
         let db = clientInfo.db("bike");
         await db.collection("service").insertOne(req.body)
-        await MailUser(req.body.email,req.body.firstName,req.body.dateTime,req.body.model)
+      //  await MailUser(req.body.email,req.body.firstName,req.body.dateTime,req.body.model)
         res.status(200).json({message:"success"})
         clientInfo.close();
     } 
@@ -55,7 +55,7 @@ app.get('/bookings', async (req, res) => {
 
 
 
-async function MailUser(email,name,date,model) {
+/*async function MailUser(email,name,date,model) {
     console.log(name)
     console.log(email)
     console.log(date)
@@ -92,5 +92,5 @@ async function MailUser(email,name,date,model) {
     });
 
 }
-
+*/
 app.listen(port, () => console.log("started at port ", port));
