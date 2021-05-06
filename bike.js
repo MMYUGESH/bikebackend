@@ -3,16 +3,20 @@ const mongodb = require('mongodb');
 require('dotenv').config();
 const nodemailer = require("nodemailer");
 const app = express();
+var cors = require("cors");
+
 const mongoClient = mongodb.MongoClient;
 const dbUrl = process.env.DB_URL || "mongodb://127.0.0.1:27017";
 const port = process.env.PORT || 4000;
-var cors = require("cors");
 
-app.use(cors());
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
+app.use(cors());
+
+
 app.use(function(req, res, next) {  
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
     res.header("Access-Control-Allow-Headers","*");
 res.header('Access-Control-Allow-Credentials', true);
 res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
@@ -21,7 +25,7 @@ res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
 
 
 
-app.post('/book', async (req, res) => {
+app.post('/book',cors(),async (req, res) => {
     try {
         let clientInfo = await mongoClient.connect(dbUrl);
         let db = clientInfo.db("bike");
@@ -56,12 +60,10 @@ async function MailUser(email,name,date,model) {
     console.log(email)
     console.log(date)
     console.log(model)
-    let transporter = nodemailer.createTransport({
+    let transport = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 465,
         secure: true, 
-        type: 'POST',
-        headers: {'Accept': 'application/json;'},
         auth: {      
             user:"mmyugesh@gmail.com",
             pass:process.env.pwd
@@ -73,7 +75,7 @@ async function MailUser(email,name,date,model) {
    
 
     // sending mail 
-    let info = await transporter.sendMail({
+     await transport.sendMail({
         from:"mmyugesh@gmail.com", 
         to: email, 
         subject: "Confirmation for booking bike service from MechMach", 
@@ -81,7 +83,7 @@ async function MailUser(email,name,date,model) {
     });
 
     // verify connection configuration
-    transporter.verify(function (error, success) {
+    transport.verify(function (error, success) {
         if (error) {
             console.log(error);
         } else {
